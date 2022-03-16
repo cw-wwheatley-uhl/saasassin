@@ -1,15 +1,34 @@
 // Create Context Menus
 chrome.runtime.onInstalled.addListener( () => {
     chrome.contextMenus.create({
-        id: "Test",
-        title: "Test: %s",
+        id: "main",
+        title: "SaaSassin",
         contexts:["selection"]
     });
+    chrome.contextMenus.create({
+        id: "firstChild",
+        parentId: "main",
+        title: "Butt!",
+        contexts: ["selection"]
+    });
+    chrome.contextMenus.create({
+        id: "line",
+        parentId: "main",
+        type: "separator",
+        contexts: ["selection"]
+    });
+    chrome.contextMenus.create({
+        id: "secondChild",
+        parentId: "main",
+        title: "MAIN:",
+        contexts: ["selection"]
+    });
+
 });
 
 // listens for Context Menu Click
 chrome.contextMenus.onClicked.addListener( (info,tab) => {
-    if ( 'Test'  === info.menuItemId ) {
+    if ( 'Child'  === info.menuItemId ) {
         const msg = info.selectionText;
         let tab = getCurrentTab();
         let currTab = tab.then( value => { 
