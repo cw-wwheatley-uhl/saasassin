@@ -1,12 +1,14 @@
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         // console.log("this " + request.message);
-        parseJson(request.message);
+        console.log("Type: " + request.type)
+        let parsed = parseJson(request.message);
+        // copyToClipboard(parsed);
         sendResponse({ status: "done" });
 });
 
 function copyToClipboard(text) {
-        navigator.clipboard.writeText(request.message).then(
+        navigator.clipboard.writeText(text).then(
         function () {
             console.log("yes");
         },
@@ -21,5 +23,6 @@ function parseJson(message) {
     // console.log(obj._source.additionalInfo);
     var additional = obj._source.additionalInfo;
     var array = additional.replace(/\[|\]/g, "");
-    console.log(array);
+    // console.log(array);
+    return array;
 };

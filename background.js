@@ -10,10 +10,10 @@ chrome.runtime.onInstalled.addListener( () => {
 // listens for Context Menu Click
 chrome.contextMenus.onClicked.addListener( (info,tab) => {
     if ( 'Test'  === info.menuItemId ) {
-        var msg = info.selectionText;
-        var tab = getCurrentTab();
-        var currTab = tab.then( value => { 
-            console.log("This is the Tab Id: " + value);
+        const msg = info.selectionText;
+        let tab = getCurrentTab();
+        let currTab = tab.then( value => { 
+            // console.log("This is the Tab Id: " + value);
             sendAMessage(value, msg);
         });
     }
@@ -21,8 +21,8 @@ chrome.contextMenus.onClicked.addListener( (info,tab) => {
 
 //  Sends Message to Content.js
 async function sendAMessage(value, msg) {
-    chrome.tabs.sendMessage(value, {message: msg}, function(response) {
-        console.log(response.status);
+    chrome.tabs.sendMessage(value, {type: "ATYPICAL", message: msg}, function(response) {
+        console.log("Response: " + response.status);
     });
 }
 
