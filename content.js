@@ -1,8 +1,8 @@
-chrome.runtime.onMessage.addListener(
-    function (request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener( (request, sender, sendResponse) => {
         // console.log("this " + request.message);
-        console.log("Type: " + request.type)
-        let parsed = parseJson(request.message);
+        console.log("Type: " + request.type);
+        console.log(request.message);
+        // let parsed = parseJson(request.message);
         // copyToClipboard(parsed);
         sendResponse({ status: "done" });
 });

@@ -3,44 +3,48 @@ chrome.runtime.onInstalled.addListener( () => {
     chrome.contextMenus.create({
         id: "main",
         title: "SaaSassin",
-        contexts:["selection"]
+        contexts:["all"]
     });
     chrome.contextMenus.create({
-        id: "firstChild",
+        id: "parse",
         parentId: "main",
-        title: "Butt!",
+        title: "PARSE:",
+        contexts: ["all"]
+    });
+    chrome.contextMenus.create({
+        id: "useSelected",
+        parentId: "parse",
+        title: "Use Selected Text...",
         contexts: ["selection"]
     });
     chrome.contextMenus.create({
-        id: "line",
-        parentId: "main",
-        type: "separator",
-        contexts: ["selection"]
-    });
-    chrome.contextMenus.create({
-        id: "secondChild",
-        parentId: "main",
-        title: "MAIN:",
-        contexts: ["selection"]
+        id: "useClipboard",
+        parentId: "parse",
+        title: "Use Clipboard text...",
+        contexts: ["page", "selection"]
     });
 
 });
 
 // listens for Context Menu Click
 chrome.contextMenus.onClicked.addListener( (info,tab) => {
-    if ( 'Child'  === info.menuItemId ) {
+    if ( 'useSelected'  === info.menuItemId ) {
         const msg = info.selectionText;
-        let tab = getCurrentTab();
-        let currTab = tab.then( value => { 
-            // console.log("This is the Tab Id: " + value);
-            sendAMessage(value, msg);
+        // let tab = getCurrentTab();
+        // let currTab = tab.then( tabId => { 
+            // sendAMessage(tabId, msg);
+        // });
+        getCurrentTab().then( tabId => { 
+			const type = "useSelected"
+        	console.log(tabId);
+        	sendAMessage(tabId, type, msg);
         });
     }
 });
 
 //  Sends Message to Content.js
-async function sendAMessage(value, msg) {
-    chrome.tabs.sendMessage(value, {type: "ATYPICAL", message: msg}, function(response) {
+async function sendAMessage(tabId, type, msg) {
+    chrome.tabs.sendMessage(tabId, {type: type, message: msg}, (response) => {
         console.log("Response: " + response.status);
     });
 }
