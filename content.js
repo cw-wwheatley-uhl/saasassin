@@ -1,10 +1,16 @@
 chrome.runtime.onMessage.addListener( (request, sender, sendResponse) => {
         // console.log("this " + request.message);
-        console.log("Type: " + request.type);
-        console.log(request.message);
-        // let parsed = parseJson(request.message);
-        // copyToClipboard(parsed);
-        sendResponse({ status: "done" });
+        if ('useSelected' === request.type ) {
+            console.log("Type: " + request.type);
+            console.log(request.message);
+            sendResponse({ status: "done" });
+        }else if ('useClipboard' === request.type) {
+            console.log("Type: " + request.type);
+            console.log(request.message);
+            const clipData = getClipboard();
+            console.log(clipData);
+            sendResponse({ status: "done"});
+        }
 });
 
 function copyToClipboard(text) {
@@ -15,14 +21,14 @@ function copyToClipboard(text) {
         function () {
             console.log("no");
         }
-    );
+    )
 };
-
-function parseJson(message) {
-    const obj = JSON.parse(message);
-    // console.log(obj._source.additionalInfo);
-    var additional = obj._source.additionalInfo;
-    var array = additional.replace(/\[|\]/g, "");
-    // console.log(array);
-    return array;
+async function getClipboard() {
+    try {
+    const text = await navigator.clipboard.readText();
+    console.log(text);
+    return text; 
+    } catch (err) {
+        console.log("Failed to read clipboard: ", err);
+    }
 };

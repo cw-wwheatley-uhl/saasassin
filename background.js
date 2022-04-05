@@ -30,15 +30,15 @@ chrome.runtime.onInstalled.addListener( () => {
 chrome.contextMenus.onClicked.addListener( (info,tab) => {
     if ( 'useSelected'  === info.menuItemId ) {
         const msg = info.selectionText;
-        // let tab = getCurrentTab();
-        // let currTab = tab.then( tabId => { 
-            // sendAMessage(tabId, msg);
-        // });
-        getCurrentTab().then( tabId => { 
-			const type = "useSelected"
-        	console.log(tabId);
-        	sendAMessage(tabId, type, msg);
-        });
+        const type = "useSelected";
+		const parsed = parseJson(msg);
+        sendAMessage(tab.id, type, parsed);
+    }else if ('useClipboard' === info.menuItemId ) {
+        const msg = "getClipboard();"
+        const type = info.menuItemId;
+        console.log(msg);
+        // const parsed = parseJson(msg);
+        sendAMessage(tab.id, type, msg);
     }
 });
 
@@ -47,11 +47,23 @@ async function sendAMessage(tabId, type, msg) {
     chrome.tabs.sendMessage(tabId, {type: type, message: msg}, (response) => {
         console.log("Response: " + response.status);
     });
-}
+};
 
-// Gets active tab ID int
-async function getCurrentTab() {
-  let queryOptions = { active: true, currentWindow: true };
-  let [tab] = await chrome.tabs.query(queryOptions);
-  return tab.id;
-}
+
+function parseJson(message) {
+    try {
+        const obj = JSON.parse(message);
+        var array = obj._source; 
+		return array;
+    } catch (e) {
+		const error = 'Invalid JSON: ' + e;
+        console.log(error);
+		return error;
+    }
+};
+
+// function getClipboard() {
+//     navigator.clipboard.readText().then( clipText => {
+//         return clipText;}
+//     );
+// };
