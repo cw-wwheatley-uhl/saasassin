@@ -36,17 +36,27 @@ chrome.contextMenus.onClicked.addListener( (info,tab) => {
     }else if ('useClipboard' === info.menuItemId ) {
         const msg = "getClipboard();"
         const type = info.menuItemId;
-        sendAMessage(tab.id, type, msg);
+        // sendAMessage(tab.id, type, msg);
+        connectToTab(tab.id, type, msg);
     }
 });
 
 //  Sends Message to Content.js
 async function sendAMessage(tabId, type, msg) {
     chrome.tabs.sendMessage(tabId, {type: type, message: msg}, async (response) => {
-        console.log(response.data);
+        console.log("Response: " + response.status);
     });
 };
 
+function connectToTab(tabId, type, msg) {
+    const port = chrome.tabs.connect(tabId, {name: "contentTab"});
+    port.postMessage({type: type, message: msg});
+    port.onMessage.addListener( (msg) => {
+        if(msg.data) {
+            console.log(msg.data);
+        }
+    })
+}
 
 function parseJson(message) {
     try {

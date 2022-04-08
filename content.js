@@ -4,14 +4,25 @@ chrome.runtime.onMessage.addListener( (request, sender, sendResponse) => {
             console.log("Type: " + request.type);
             console.log(request.message);
             sendResponse({ status: "done" });
-        }else if ('useClipboard' === request.type) {
-            console.log("Type: " + request.type);
-            console.log(request.message);
-            const clipData = getClipboard();
-            console.log(clipData);
-            sendResponse( {status: "done"} );
         }
-    return true;
+        // }else if ('useClipboard' === request.type) {
+        //     console.log("Type: " + request.type);
+        //     console.log(request.message);
+        //     const clipData = getClipboard();
+        //     console.log(clipData);
+        //     sendResponse( {status: "done"} );
+        // }
+});
+
+chrome.runtime.onConnect.addListener( (port) => {
+    port.onMessage.addListener( (msg) => {
+        if (port.name === 'contentTab'){
+            console.log(msg.message);
+            getClipboard().then( (clipData) => {
+                port.postMessage({data: clipData});
+            })
+        }
+    });
 });
 
 function copyToClipboard(text) {
