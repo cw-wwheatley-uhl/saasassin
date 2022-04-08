@@ -9,8 +9,9 @@ chrome.runtime.onMessage.addListener( (request, sender, sendResponse) => {
             console.log(request.message);
             const clipData = getClipboard();
             console.log(clipData);
-            sendResponse({ status: "done"});
+            sendResponse( {status: "done"} );
         }
+    return true;
 });
 
 function copyToClipboard(text) {

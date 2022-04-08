@@ -36,16 +36,14 @@ chrome.contextMenus.onClicked.addListener( (info,tab) => {
     }else if ('useClipboard' === info.menuItemId ) {
         const msg = "getClipboard();"
         const type = info.menuItemId;
-        console.log(msg);
-        // const parsed = parseJson(msg);
         sendAMessage(tab.id, type, msg);
     }
 });
 
 //  Sends Message to Content.js
 async function sendAMessage(tabId, type, msg) {
-    chrome.tabs.sendMessage(tabId, {type: type, message: msg}, (response) => {
-        console.log("Response: " + response.status);
+    chrome.tabs.sendMessage(tabId, {type: type, message: msg}, async (response) => {
+        console.log(response.data);
     });
 };
 
@@ -61,6 +59,16 @@ function parseJson(message) {
 		return error;
     }
 };
+
+function parseAdditionalJson(message) {
+    try {
+        
+    } catch (e) {
+        const error = 'Invalid JSON: ' + e;
+        console.log(error);
+		return error;
+    }
+}
 
 // function getClipboard() {
 //     navigator.clipboard.readText().then( clipText => {
