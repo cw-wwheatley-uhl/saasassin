@@ -36,7 +36,6 @@ chrome.contextMenus.onClicked.addListener( (info,tab) => {
     }else if ('useClipboard' === info.menuItemId ) {
         const msg = "getClipboard();"
         const type = info.menuItemId;
-        // sendAMessage(tab.id, type, msg);
         connectToTab(tab.id, type, msg);
     }
 });
@@ -53,7 +52,12 @@ function connectToTab(tabId, type, msg) {
     port.postMessage({type: type, message: msg});
     port.onMessage.addListener( (msg) => {
         if(msg.data) {
-            console.log(msg.data);
+            const parsed = parseJson(msg.data);
+            // console.log(parsed.additionalInfo);
+            const extraParsed = parseAdditionalJson(parsed.additionalInfo.replace(/^\[|\]$|/g, '').replace(/\},\{/g, ',').replace(/\"Key\"\:/g, '').replace(/\,\"Value\"/g, ''));
+ 
+            console.log("User Principal Name: " + parsed.userPrincipalName);
+            console.log("Current Login IP: " + parsed.ipAddress);
         }
     })
 }
@@ -72,16 +76,12 @@ function parseJson(message) {
 
 function parseAdditionalJson(message) {
     try {
-        
+        const obj = JSON.parse(message);
+        var array = obj; 
+		return array;
     } catch (e) {
-        const error = 'Invalid JSON: ' + e;
+		const error = 'Invalid JSON: ' + e;
         console.log(error);
 		return error;
     }
 }
-
-// function getClipboard() {
-//     navigator.clipboard.readText().then( clipText => {
-//         return clipText;}
-//     );
-// };
