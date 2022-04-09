@@ -54,10 +54,16 @@ function connectToTab(tabId, type, msg) {
         if(msg.data) {
             const parsed = parseJson(msg.data);
             // console.log(parsed.additionalInfo);
-            const extraParsed = parseAdditionalJson(parsed.additionalInfo.replace(/^\[|\]$|/g, '').replace(/\},\{/g, ',').replace(/\"Key\"\:/g, '').replace(/\,\"Value\"/g, ''));
- 
-            console.log("User Principal Name: " + parsed.userPrincipalName);
-            console.log("Current Login IP: " + parsed.ipAddress);
+            if(parsed.riskType === 'unlikelyTravel') {
+                const extraParsed = parseAdditionalJson(parsed.additionalInfo.replace(/^\[|\]$|/g, '').replace(/\},\{/g, ',').replace(/\"Key\"\:/g, '').replace(/\,\"Value\"/g, ''));
+    
+                console.log("User Principal Name: " + parsed.userPrincipalName);
+                console.log("Current Login IP: " + parsed.ipAddress);
+                console.log("Current Login Timestamp: " + parsed.timestamp);
+                console.log("Previous Login IP: " + extraParsed.relatedLocation.clientIP);
+                console.log("Previous Login Timestamp: " + extraParsed.relatedEventTimeInUtc);
+                console.log(extraParsed);
+            }
         }
     })
 }
