@@ -1,3 +1,6 @@
+// import {Record} from './record.js';
+importScripts('record.js');
+
 // Create Context Menus
 chrome.runtime.onInstalled.addListener( () => {
     chrome.contextMenus.create({
@@ -28,66 +31,33 @@ chrome.runtime.onInstalled.addListener( () => {
 
 // listens for Context Menu Click
 chrome.contextMenus.onClicked.addListener( (info,tab) => {
+    handleEvent(info, tab);
+});
+
+async function handleEvent(info, tab){
     if ( 'useSelected'  === info.menuItemId ) {
-        const msg = info.selectionText;
-        const type = "useSelected";
-		const parsed = parseJson(msg);
-        sendAMessage(tab.id, type, parsed);
+        const record = new Record(info.selectionText);
+         console.log(record.readBlob());
     }else if ('useClipboard' === info.menuItemId ) {
         const msg = "getClipboard();"
         const type = info.menuItemId;
         connectToTab(tab.id, type, msg);
     }
-});
-
-//  Sends Message to Content.js
-async function sendAMessage(tabId, type, msg) {
-    chrome.tabs.sendMessage(tabId, {type: type, message: msg}, async (response) => {
-        console.log("Response: " + response.status);
-    });
-};
+}
 
 function connectToTab(tabId, type, msg) {
     const port = chrome.tabs.connect(tabId, {name: "contentTab"});
     port.postMessage({type: type, message: msg});
     port.onMessage.addListener( (msg) => {
         if(msg.data) {
-            const parsed = parseJson(msg.data);
-            // console.log(parsed.additionalInfo);
-            if(parsed.riskType === 'unlikelyTravel') {
-                const extraParsed = parseAdditionalJson(parsed.additionalInfo.replace(/^\[|\]$|/g, '').replace(/\},\{/g, ',').replace(/\"Key\"\:/g, '').replace(/\,\"Value\"/g, ''));
-    
-                console.log("User Principal Name: " + parsed.userPrincipalName);
-                console.log("Current Login IP: " + parsed.ipAddress);
-                console.log("Current Login Timestamp: " + parsed.timestamp);
-                console.log("Previous Login IP: " + extraParsed.relatedLocation.clientIP);
-                console.log("Previous Login Timestamp: " + extraParsed.relatedEventTimeInUtc);
-                console.log(extraParsed);
-            }
+            const record = new Record(msg.data);
+            console.log(record.readBlob());
+
+        //     TODO - Place result in view of user
+        //     chrome.tabs.create({'url':'./popup.html'});
+        //     chrome.runtime.sendMessage({type: "result", msg: record.readBlob()}, (response) => {
+        //         console.log(response);
+        //     });
         }
-    })
-}
-
-function parseJson(message) {
-    try {
-        const obj = JSON.parse(message);
-        var array = obj._source; 
-		return array;
-    } catch (e) {
-		const error = 'Invalid JSON: ' + e;
-        console.log(error);
-		return error;
-    }
-};
-
-function parseAdditionalJson(message) {
-    try {
-        const obj = JSON.parse(message);
-        var array = obj; 
-		return array;
-    } catch (e) {
-		const error = 'Invalid JSON: ' + e;
-        console.log(error);
-		return error;
-    }
+    });
 }

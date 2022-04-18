@@ -10,18 +10,18 @@ chrome.runtime.onMessage.addListener( (request, sender, sendResponse) => {
 chrome.runtime.onConnect.addListener( (port) => {
     port.onMessage.addListener( (msg) => {
         if (port.name === 'contentTab'){
-            console.log(msg.message);
-            getClipboard().then( (clipData) => {
-                port.postMessage({data: clipData});
-            })
-        }
+            if (msg.type === 'useClipboard')
+{                getClipboard().then( (clipData) => {
+                    port.postMessage({data: clipData});
+                });
+            };
+        };
     });
 });
 
 async function getClipboard() {
     try {
     const text = await navigator.clipboard.readText();
-    console.log(text);
     return text; 
     } catch (err) {
         console.log("Failed to read clipboard: ", err);
