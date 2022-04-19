@@ -37,6 +37,14 @@ class Record {
             response += ("Target: " + this.parsed.Target[3].ID +
                 "\nActor: " + this.parsed.Actor[0].ID + 
                 "\nTimestamp: " + this.parsed.perch_ingestion_timestamp );
+        }else if(this.parsed.DetectionMethod === 'Antimalware protection') {
+            response += `Recipient: ${this.parsed.Recipients[0]}
+Sender: ${this.parsed.P2Sender}
+Sender IP: ${this.parsed.SenderIp}
+Internet Message ID: ${this.parsed.InternetMessageId}
+Subject: ${this.parsed.Subject}
+Attachment: ${this.parsed.AttachmentData[0].FileName}
+Hash: ${this.parsed.AttachmentData[0].SHA256}`
         }
         return response;
     }
