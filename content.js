@@ -15,6 +15,7 @@ chrome.runtime.onConnect.addListener( (port) => {
                 });
             }else if (msg.type === 'writeClipboard'){
                 writeClipboard(msg.message);
+                
             };
     });
 });
