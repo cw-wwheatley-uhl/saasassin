@@ -14,7 +14,7 @@ chrome.runtime.onConnect.addListener( (port) => {
                     port.postMessage({type: 'rawClip', data: clipData});
                 });
             }else if (msg.type === 'writeClipboard'){
-                writeClipboard(msg.data);
+                writeClipboard(msg.message);
             };
     });
 });

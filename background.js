@@ -36,8 +36,11 @@ chrome.contextMenus.onClicked.addListener( (info,tab) => {
 
 async function handleEvent(info, tab){
     if ( 'useSelected'  === info.menuItemId ) {
+        let response = "";
         const record = new Record(info.selectionText);
-         console.log(record.readBlob());
+         response += record.readBlob();
+         console.log(response);
+         connectToTab(tab.id, "writeClipboard", response);
     }else if ('useClipboard' === info.menuItemId ) {
         const msg = "getClipboard();"
         const type = info.menuItemId;
@@ -57,7 +60,7 @@ async function connectToTab(tabId, type, msg) {
             console.log(response);
         }
 
-    port.postMessage({type: "writeClipboard", data: response});
+    port.postMessage({type: "writeClipboard", message: response});
         //     TODO - Place result in view of user
         //     chrome.tabs.create({'url':'./popup.html'});
         //     chrome.runtime.sendMessage({type: "result", msg: record.readBlob()}, (response) => {
