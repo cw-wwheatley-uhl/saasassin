@@ -45,19 +45,23 @@ async function handleEvent(info, tab){
     }
 }
 
-function connectToTab(tabId, type, msg) {
+async function connectToTab(tabId, type, msg) {
     const port = chrome.tabs.connect(tabId, {name: "contentTab"});
+    let response = "";
     port.postMessage({type: type, message: msg});
+    
     port.onMessage.addListener( (msg) => {
-        if(msg.data) {
+        if(msg.type === 'rawClip') {
             const record = new Record(msg.data);
-            console.log(record.readBlob());
+            response += record.readBlob();
+            console.log(response);
+        }
 
+    port.postMessage({type: "writeClipboard", data: response});
         //     TODO - Place result in view of user
         //     chrome.tabs.create({'url':'./popup.html'});
         //     chrome.runtime.sendMessage({type: "result", msg: record.readBlob()}, (response) => {
         //         console.log(response);
         //     });
-        }
     });
 }
