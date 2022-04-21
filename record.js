@@ -21,18 +21,20 @@ class Record {
             const additionalInfo = this.parsed.additionalInfo;
             const extraParsed = this.parseJson(additionalInfo.replace(/^\[|\]$|\"Key\"\:|\,\"Value\"/g, '').replace(/\},\{/g, ','));
 
-            response += ("User Principal Name: " + this.parsed.userPrincipalName + 
-                "\nCurrent Login IP: " + this.parsed.ipAddress + 
-                "\nCurrent Login Timestamp: " + this.parsed.timestamp +
-                "\nPrevious Login IP: " + extraParsed.relatedLocation.clientIP + 
-                "\nPrevious Login Timestamp: " + extraParsed.relatedEventTimeInUtc);
+            response += ("User Mailbox: " + this.parsed.userPrincipalName + 
+                "\nCurrent Sign In IP: " + this.parsed.ipAddress + 
+                "\nTime: " + this.parsed.timestamp +
+                "\nGeo Location" +
+                "\nPrevious Sign in IP: " + extraParsed.relatedLocation.clientIP + 
+                "\nTime: " + extraParsed.relatedEventTimeInUtc);
         
         }else if(this.parsed.title === 'Atypical travel'){
             response += ("User Principal Name: " + this.parsed.userStates[0].userPrincipalName + 
-                "\nCurrent Login IP: " + this.parsed.userStates[0].logonIp + 
-                "\nCurrent Login Timestamp: " + this.parsed.userStates[0].logonDateTime +
-                "\nPrevious Login IP: " + this.parsed.userStates[1].logonIp + 
-                "\nPrevious Login Timestamp: " + this.parsed.userStates[1].logonDateTime);
+                "\nCurrent Sign In IP: " + this.parsed.userStates[0].logonIp + 
+                "\nTime: " + this.parsed.userStates[0].logonDateTime +
+                "\nGeo Location:\n" +
+                "\nPrevious Sign in IP: " + this.parsed.userStates[1].logonIp + 
+                "\nTime: " + this.parsed.userStates[1].logonDateTime);
         }else if( this.parsed.Operation === 'Delete application password for user.') {
             response += ("Target: " + this.parsed.Target[3].ID +
                 "\nActor: " + this.parsed.Actor[0].ID + 
