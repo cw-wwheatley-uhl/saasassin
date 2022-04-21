@@ -1,12 +1,4 @@
-chrome.runtime.onMessage.addListener( (request, sender, sendResponse) => {
-        // console.log("this " + request.message);
-        if ('useSelected' === request.type ) {
-            console.log("Type: " + request.type);
-            console.log(request.message);
-            sendResponse({ status: "done" });
-        }
-});
-
+// Listen for messages via port connected to tab.
 chrome.runtime.onConnect.addListener( (port) => {
     port.onMessage.addListener( (msg) => {
             if (msg.type === 'useClipboard') {
@@ -20,15 +12,17 @@ chrome.runtime.onConnect.addListener( (port) => {
     });
 });
 
+// Get data from Clipboard
 async function getClipboard() {
     try {
     const text = await navigator.clipboard.readText();
     return text; 
     } catch (err) {
-        console.log("Failed to read clipboard: ", err);
+        console.error("Failed to read clipboard: ", err);
     }
 };
 
+// Write processed data to clipboard.
 async function writeClipboard(data) {
     try {
         await navigator.clipboard.writeText(data);

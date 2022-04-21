@@ -9,24 +9,17 @@ chrome.runtime.onInstalled.addListener( () => {
         contexts:["all"]
     });
     chrome.contextMenus.create({
-        id: "parse",
-        parentId: "main",
-        title: "PARSE:",
-        contexts: ["all"]
-    });
-    chrome.contextMenus.create({
         id: "useSelected",
-        parentId: "parse",
+        parentId: "main",
         title: "Use Selected Text...",
         contexts: ["selection"]
     });
     chrome.contextMenus.create({
         id: "useClipboard",
-        parentId: "parse",
+        parentId: "main",
         title: "Use Clipboard text...",
         contexts: ["page", "selection"]
     });
-
 });
 
 // listens for Context Menu Click
@@ -34,12 +27,12 @@ chrome.contextMenus.onClicked.addListener( (info,tab) => {
     handleEvent(info, tab);
 });
 
+// Process inbound context menu click events
 async function handleEvent(info, tab){
     if ( 'useSelected'  === info.menuItemId ) {
         let response = "";
         const record = new Record(info.selectionText);
          response += record.readBlob();
-         console.log(response);
          connectToTab(tab.id, "writeClipboard", response);
     }else if ('useClipboard' === info.menuItemId ) {
         const msg = "getClipboard();"
@@ -48,6 +41,7 @@ async function handleEvent(info, tab){
     }
 }
 
+// Connect to tab calling extension, returning clibpoard data
 async function connectToTab(tabId, type, msg) {
     const port = chrome.tabs.connect(tabId, {name: "contentTab"});
     let response = "";
@@ -57,14 +51,8 @@ async function connectToTab(tabId, type, msg) {
         if(msg.type === 'rawClip') {
             const record = new Record(msg.data);
             response += record.readBlob();
-            console.log(response);
+            port.postMessage({type: "writeClipboard", message: response});
         }
-
-    port.postMessage({type: "writeClipboard", message: response});
-        //     TODO - Place result in view of user
-        //     chrome.tabs.create({'url':'./popup.html'});
-        //     chrome.runtime.sendMessage({type: "result", msg: record.readBlob()}, (response) => {
-        //         console.log(response);
-        //     });
+        //     TODO - Place result in view of use
     });
 }
