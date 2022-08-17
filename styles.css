@@ -1,0 +1,53 @@
+html {
+    min-width: 250px;
+    min-height: 400px;
+    color: white;
+}
+body {
+    margin: 0px;
+    background-color: rgb(78, 78, 78);
+    animation: fadeInAnimation ease 1.5s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+}
+@keyframes fadeInAnimation {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+a {
+    text-decoration: none;
+    color: white;
+}
+.header {
+    margin: none;
+    min-height: 50px;
+    top: 0px;
+    text-align: center;
+    padding: 10px;
+    /* color: white; */
+    background-color: purple;
+    display: block;
+}
+.header h1 {
+    margin: 5px;
+}
+.main-container {
+    min-width: 200px;
+    margin: 5px;
+    text-align: center;
+    /* color: white; */
+}
+
+.help-items {
+    text-align: left;
+    padding: 15px;
+    margin: auto;
+}
+.help-items li {
+    margin-bottom: 1em;
+}
+

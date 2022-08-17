@@ -30,3 +30,4 @@ async function writeClipboard(data) {
         console.error('Failed to write Clipboard', err);
     }
 };
+

@@ -30,10 +30,11 @@ chrome.contextMenus.onClicked.addListener( (info,tab) => {
 // Process inbound context menu click events
 async function handleEvent(info, tab){
     if ( 'useSelected'  === info.menuItemId ) {
-        let response = "";
         const record = new Record(info.selectionText);
-         response += record.readBlob();
-         connectToTab(tab.id, "writeClipboard", response);
+        record.readBlob().then( (response) => {
+            connectToTab(tab.id, "writeClipboard", response);
+        });
+        //  connectToTab(tab.id, "writeClipboard", response);
     }else if ('useClipboard' === info.menuItemId ) {
         const msg = "getClipboard();"
         const type = info.menuItemId;
@@ -44,14 +45,16 @@ async function handleEvent(info, tab){
 // Connect to tab calling extension, returning clibpoard data
 async function connectToTab(tabId, type, msg) {
     const port = chrome.tabs.connect(tabId, {name: "contentTab"});
-    let response = "";
     port.postMessage({type: type, message: msg});
     
     port.onMessage.addListener( (msg) => {
         if(msg.type === 'rawClip') {
             const record = new Record(msg.data);
-            response += record.readBlob();
-            port.postMessage({type: "writeClipboard", message: response});
+            // const response = record.readBlob();
+            record.readBlob().then( (response) => {
+                port.postMessage({type: "writeClipboard", message: response});
+            })
+            // port.postMessage({type: "writeClipboard", message: response});
         }
         //     TODO - Place result in view of use
     });
