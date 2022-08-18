@@ -18,7 +18,7 @@
     "permissions": [
         "contextMenus",
         "clipboardWrite",
-        "clipboard-read",
+        "clipboardRead",
         "tabs",
         "activeTab",
         "storage"
