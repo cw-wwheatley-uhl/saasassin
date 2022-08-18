@@ -18,11 +18,10 @@ class Record {
     async readBlob() {
         let response = "";
         let result = "";
-        
-        const additionalInfo = this.parsed.additionalInfo;
-        const extraParsed = this.parseJson(additionalInfo.replace(/^\[|\]$|\"Key\"\:|\,\"Value\"/g, '').replace(/\},\{/g, ','));
-        
+                    
         if(this.parsed.riskType === 'unlikelyTravel') {
+            const additionalInfo = this.parsed.additionalInfo;
+            const extraParsed = this.parseJson(additionalInfo.replace(/^\[|\]$|\"Key\"\:|\,\"Value\"/g, '').replace(/\},\{/g, ','));
             
             const ipAddr1 = await this.geoIPLookup(this.parsed.ipAddress);
             const ipAddr2 = await this.geoIPLookup(extraParsed.relatedLocation.clientIP);
@@ -36,22 +35,20 @@ class Record {
                 "\nGeo Location: " + ipAddr2;
         
         }else if(this.parsed.title === 'Atypical travel'){
-            const ipAddr1 = await this.geoIPLookup(this.parsed.ipAddress);
-            const ipAddr2 = await this.geoIPLookup(extraParsed.relatedLocation.clientIP);
+            const ipAddr1 = await this.geoIPLookup(this.parsed.userStates[0].logonIp);
+            const ipAddr2 = await this.geoIPLookup(this.parsed.userStates[1].logonIp);
             response += ("User Principal Name: " + this.parsed.userStates[0].userPrincipalName + 
                 "\nCurrent Sign In IP: " + this.parsed.userStates[0].logonIp + 
                 "\nTime: " + this.parsed.userStates[0].logonDateTime +
-                "\nGeo Location: " + this.geoIP(this.parsed.userStates[0].logonIp) +
+                "\nGeo Location: " + ipAddr1 +
                 "\nPrevious Sign in IP: " + this.parsed.userStates[1].logonIp + 
                 "\nTime: " + this.parsed.userStates[1].logonDateTime +
-                "\nGeo Location: " + this.geoIP(this.parsed.userStates[1].logonIp));
+                "\nGeo Location: " + ipAddr2);
         }else if( this.parsed.Operation === 'Delete application password for user.') {
             response += ("Target: " + this.parsed.Target[3].ID +
                 "\nActor: " + this.parsed.Actor[0].ID + 
                 "\nTimestamp: " + this.parsed.perch_ingestion_timestamp );
         }else if(this.parsed.DetectionMethod === 'Antimalware protection') {
-            const ipAddr1 = await this.geoIPLookup(this.parsed.ipAddress);
-            const ipAddr2 = await this.geoIPLookup(extraParsed.relatedLocation.clientIP);
             response += `Recipient: ${this.parsed.Recipients[0]}\nSender: ${this.parsed.P2Sender}\nSender IP: ${this.parsed.SenderIp}\nInternet Message ID: ${this.parsed.InternetMessageId}\nSubject: ${this.parsed.Subject}\nAttachment: ${this.parsed.AttachmentData[0].FileName}\nHash: ${this.parsed.AttachmentData[0].SHA256}`
         }
         return response;
