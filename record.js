@@ -18,9 +18,12 @@ class Record {
     async readBlob() {
         let response = "";
         let result = "";
+        
+        const additionalInfo = this.parsed.additionalInfo;
+        const extraParsed = this.parseJson(additionalInfo.replace(/^\[|\]$|\"Key\"\:|\,\"Value\"/g, '').replace(/\},\{/g, ','));
+        
         if(this.parsed.riskType === 'unlikelyTravel') {
-            const additionalInfo = this.parsed.additionalInfo;
-            const extraParsed = this.parseJson(additionalInfo.replace(/^\[|\]$|\"Key\"\:|\,\"Value\"/g, '').replace(/\},\{/g, ','));
+            
             const ipAddr1 = await this.geoIPLookup(this.parsed.ipAddress);
             const ipAddr2 = await this.geoIPLookup(extraParsed.relatedLocation.clientIP);
             result += await this.geoIPLookup("hello");
