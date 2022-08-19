@@ -1,5 +1,5 @@
 // import {Record} from './record.js';
-importScripts('record.js');
+importScripts('record.js', 'response.js');
 
 // Create Context Menus
 chrome.runtime.onInstalled.addListener( () => {
@@ -31,9 +31,13 @@ chrome.contextMenus.onClicked.addListener( (info,tab) => {
 async function handleEvent(info, tab){
     if ( 'useSelected'  === info.menuItemId ) {
         const record = new Record(info.selectionText);
-        record.readBlob().then( (response) => {
-            connectToTab(tab.id, "writeClipboard", response);
-        });
+        const response = new Response(record);
+            response.parseRecord().then( (response) => {
+                connectToTab(tab.id, "writeClipboard", response);
+            })
+        // record.readBlob().then( (response) => {
+        //     connectToTab(tab.id, "writeClipboard", response);
+        // });
         //  connectToTab(tab.id, "writeClipboard", response);
     }else if ('useClipboard' === info.menuItemId ) {
         const msg = "getClipboard();"
@@ -50,11 +54,10 @@ async function connectToTab(tabId, type, msg) {
     port.onMessage.addListener( (msg) => {
         if(msg.type === 'rawClip') {
             const record = new Record(msg.data);
-            // const response = record.readBlob();
-            record.readBlob().then( (response) => {
+            const response = new Response(record);
+            response.parseRecord().then( (response) => {
                 port.postMessage({type: "writeClipboard", message: response});
             })
-            // port.postMessage({type: "writeClipboard", message: response});
         }
         //     TODO - Place result in view of use
     });
