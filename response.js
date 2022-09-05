@@ -2,7 +2,7 @@ class Response {
     constructor(recordJson) {
         this.record = recordJson;
     }
-
+    // Function to parse the Record. Needs to be Async to catch the promise and use await.
     async parseRecord() {
         let response = "";
         if(this.record.parsed.riskType === 'unlikelyTravel') {
