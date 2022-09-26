@@ -35,10 +35,6 @@ async function handleEvent(info, tab){
             response.parseRecord().then( (response) => {
                 connectToTab(tab.id, "writeClipboard", response);
             })
-        // record.readBlob().then( (response) => {
-        //     connectToTab(tab.id, "writeClipboard", response);
-        // });
-        //  connectToTab(tab.id, "writeClipboard", response);
     }else if ('useClipboard' === info.menuItemId ) {
         const msg = "getClipboard();"
         const type = info.menuItemId;

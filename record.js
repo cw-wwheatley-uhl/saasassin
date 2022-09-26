@@ -9,8 +9,16 @@ class Record {
         }else if (this.parsed.AirData.AlertDisplayName === "A potentially malicious URL click was detected") {
             if(this.parsed.Status === "Investigation Started"){
                 this.mailData = this.parsed.AirData.Entities[2];
-            }else if(this.parsed.Status === "Running" || this.parsed.Status ==="Remediated" || this.parsed.Status === "Pending Action"){
+            }else if(this.parsed.Status === "Running" || this.parsed.Status ==="Remediated"){
                 this.mailData = this.parsed.AirData.Entities[0];
+            }else {
+                let x = 0;
+                for(x in this.parsed.AirData.Entities){
+                    if("Recipient" in this.parsed.AirData.Entities[x]){
+                        break;
+                    }
+                }
+                this.mailData = this.parsed.AirData.Entities[x];
             }
         }
         console.log(this.parsed)
