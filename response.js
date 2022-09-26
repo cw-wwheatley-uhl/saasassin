@@ -39,6 +39,17 @@ class Response {
 
             response += `Recipient: ${this.record.parsed.Recipients[0]}\nSender: ${this.record.parsed.P2Sender}\nSender IP: ${this.record.parsed.SenderIp}\nInternet Message ID: ${this.record.parsed.InternetMessageId}\nSubject: ${this.record.parsed.Subject}\nAttachment: ${this.record.parsed.AttachmentData[0].FileName}\nHash: ${this.record.parsed.AttachmentData[0].SHA256}`
 
+        }else if ( this.record.parsed.AirData.AlertDisplayName === "A potentially malicious URL click was detected") {
+            response += ("User Principal Name: " + this.record.mailData.Recipient +
+            "\nDescription: " + this.record.parsed.AirData.Description +
+            "\nAlert Generated Time:" + this.record.parsed.CreationTime +
+            "\nSender IP Address: " + this.record.mailData.SenderIP +
+            "\nSender Email: " + this.record.mailData.P2Sender + 
+            "\nEmail Subject: " + this.record.mailData.Subject +
+            "\nO365 Deep Link URL: " + this.record.parsed.DeepLinkUrl +
+            "\n\nURL Reputation" +
+            "\n\nO365 Investigation Status: " + this.record.parsed.AirData.Investigations[0].InvestigationStatus +
+            "\nO365 Verdict");
         }
         return response;
     }

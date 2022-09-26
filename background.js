@@ -1,4 +1,4 @@
-// import {Record} from './record.js';
+// import modules 
 importScripts('record.js', 'response.js');
 
 // Create Context Menus

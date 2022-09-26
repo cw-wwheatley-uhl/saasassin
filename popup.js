@@ -1,3 +1,5 @@
+importScripts('graph-auth.js');
+
 console.log("loaded");
 browser.runtime.onMessage.addListener( (request, sender, sendResponse) => {
     if (request.type === 'result') {

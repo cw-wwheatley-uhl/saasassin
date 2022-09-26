@@ -6,7 +6,14 @@ class Record {
         // If the alert type is Unlikely Travel, need to "extra parse" the "additionalInfo" field.
         if(this.parsed.riskType === 'unlikelyTravel') {
             this.additionalInfo = this.parseJson(this.parsed.additionalInfo.replace(/^\[|\]$|\"Key\"\:|\,\"Value\"/g, '').replace(/\},\{/g, ','));
+        }else if (this.parsed.AirData.AlertDisplayName === "A potentially malicious URL click was detected") {
+            if(this.parsed.Status === "Investigation Started"){
+                this.mailData = this.parsed.AirData.Entities[2];
+            }else if(this.parsed.Status === "Running" || this.parsed.Status ==="Remediated" || this.parsed.Status === "Pending Action"){
+                this.mailData = this.parsed.AirData.Entities[0];
+            }
         }
+        console.log(this.parsed)
     }
 
     parseJson(blob) {
